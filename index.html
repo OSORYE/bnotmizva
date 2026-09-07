@@ -1,0 +1,351 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>לוח בת המצווה</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@500;600;700&family=Rubik:wght@400;500;600;700&display=swap">
+<style>
+  :root{
+    --bg:#FBF5F2;
+    --surface:#FFFFFF;
+    --surface-2:#F4E7E1;
+    --ink:#2B222A;
+    --ink-dim:#8A7880;
+    --accent:#7C3F5C;
+    --accent-ink:#FFFFFF;
+    --accent-2:#C97A3D;
+    --accent-2-soft:#F3DFC9;
+    --school:#5E6E82;
+    --school-soft:#E3E7ED;
+    --pending:#B08900;
+    --pending-soft:#F6EFD6;
+    --line:#EAD9D2;
+    --danger:#A6483A;
+    --focus:#7C3F5C;
+    --shadow: 0 1px 2px rgba(43,34,42,0.06), 0 6px 20px -8px rgba(43,34,42,0.16);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#241820; --surface:#301F29; --surface-2:#3A2530;
+      --ink:#F3E7ED; --ink-dim:#B79AAC;
+      --accent:#E893B3; --accent-ink:#2B1420;
+      --accent-2:#E8A868; --accent-2-soft:#43301F;
+      --school:#9FB3C8; --school-soft:#28323C;
+      --pending:#E8C868; --pending-soft:#3A331C;
+      --line:#4A3540; --danger:#E8877A; --focus:#E893B3;
+      --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 10px 28px -10px rgba(0,0,0,0.5);
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#241820; --surface:#301F29; --surface-2:#3A2530;
+    --ink:#F3E7ED; --ink-dim:#B79AAC;
+    --accent:#E893B3; --accent-ink:#2B1420;
+    --accent-2:#E8A868; --accent-2-soft:#43301F;
+    --school:#9FB3C8; --school-soft:#28323C;
+    --pending:#E8C868; --pending-soft:#3A331C;
+    --line:#4A3540; --danger:#E8877A; --focus:#E893B3;
+    --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 10px 28px -10px rgba(0,0,0,0.5);
+  }
+  *{ box-sizing:border-box; }
+  body{ margin:0; background:var(--bg); color:var(--ink); font-family:"Rubik","Segoe UI","Arial Hebrew",Arial,sans-serif; -webkit-font-smoothing:antialiased; }
+  .wrap{ max-width:760px; margin:0 auto; padding:40px 20px 80px; }
+  h1,h2,h3{ font-family:"Frank Ruhl Libre","David Libre",Georgia,serif; text-wrap:balance; margin:0; }
+  .head{ margin-bottom:28px; }
+  .eyebrow{ font-size:13px; font-weight:600; letter-spacing:.06em; color:var(--accent); text-transform:uppercase; margin:0 0 10px; }
+  h1{ font-size:clamp(26px,4vw,34px); font-weight:700; color:var(--ink); line-height:1.25; }
+  .purpose{ margin-top:14px; font-size:16px; line-height:1.75; color:var(--ink); max-width:64ch; }
+  .notice{
+    margin-top:16px; font-size:13.5px; line-height:1.6; color:var(--pending);
+    background:var(--pending-soft); border-radius:10px; padding:12px 14px;
+  }
+  .legend{ margin-top:16px; display:flex; gap:18px; flex-wrap:wrap; font-size:13.5px; color:var(--ink-dim); }
+  .legend span{ display:inline-flex; align-items:center; gap:7px; }
+  .dot{ width:9px; height:9px; border-radius:50%; display:inline-block; }
+  .dot.grade{ background:var(--accent); }
+  .dot.class{ background:var(--accent-2); }
+  .dot.school{ background:var(--school); }
+  .dot.pending{ background:var(--pending); }
+  .panel{ background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:22px; box-shadow:var(--shadow); margin-bottom:36px; }
+  .panel h2{ font-size:18px; font-weight:600; margin-bottom:4px; }
+  .panel .sub{ font-size:13.5px; color:var(--ink-dim); margin:0 0 18px; }
+  .row{ display:flex; gap:14px; flex-wrap:wrap; }
+  .field{ display:flex; flex-direction:column; gap:6px; flex:1 1 180px; }
+  .field.narrow{ flex:1 1 130px; }
+  label{ font-size:13px; font-weight:500; color:var(--ink-dim); }
+  input[type="text"], input[type="tel"], select{
+    font:inherit; font-size:15px; color:var(--ink); background:var(--surface-2);
+    border:1px solid var(--line); border-radius:9px; padding:10px 12px;
+    font-variant-numeric: tabular-nums;
+  }
+  select{ cursor:pointer; }
+  input:focus-visible, select:focus-visible{ outline:2.5px solid var(--focus); outline-offset:1px; }
+  .scope-group{ display:flex; gap:8px; }
+  .scope-opt{ position:relative; flex:1; }
+  .scope-opt input{ position:absolute; opacity:0; inset:0; cursor:pointer; margin:0; width:100%; height:100%; }
+  .scope-opt span{ display:block; text-align:center; padding:10px 8px; border-radius:9px; border:1px solid var(--line); background:var(--surface-2); font-size:14px; font-weight:500; color:var(--ink-dim); }
+  .scope-opt input:checked + span{ border-color:var(--accent); background:var(--accent); color:var(--accent-ink); }
+  .conflict-note{ font-size:13.5px; color:var(--danger); margin-top:2px; display:none; }
+  .conflict-note.show{ display:block; }
+  .conflict-note.info{ color:var(--school); }
+  .form-actions{ display:flex; align-items:center; gap:14px; margin-top:18px; }
+  button.primary{ font:inherit; font-size:15px; font-weight:600; color:var(--accent-ink); background:var(--accent); border:none; border-radius:9px; padding:11px 22px; cursor:pointer; }
+  button.primary:hover{ filter:brightness(1.05); }
+  .status{ font-size:13.5px; color:var(--ink-dim); }
+  .months{ display:flex; flex-direction:column; gap:14px; }
+  .month{ background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:18px 20px; }
+  .month-head h3{ font-size:19px; font-weight:600; color:var(--ink); }
+  .empty-line{ margin-top:10px; font-size:14px; color:var(--ink-dim); }
+  .entries{ margin-top:12px; display:flex; flex-direction:column; gap:8px; }
+  .entry{ display:flex; align-items:center; gap:14px; padding:10px 12px; border-radius:10px; background:var(--surface-2); }
+  .entry.school{ background:var(--school-soft); border-inline-end:3px solid var(--school); }
+  .entry.pending{ background:var(--pending-soft); border:1px dashed var(--pending); }
+  .entry .daybadge{ flex:0 0 auto; width:52px; text-align:center; font-variant-numeric: tabular-nums; }
+  .entry .daybadge .num{ font-family:"Frank Ruhl Libre",serif; font-size:20px; font-weight:700; line-height:1; color:var(--ink); }
+  .entry .daybadge .dow{ font-size:11px; color:var(--ink-dim); margin-top:2px; }
+  .entry .names{ flex:1 1 auto; min-width:0; }
+  .entry .names .student{ font-size:15px; font-weight:600; color:var(--ink); }
+  .entry .names .parent{ font-size:13px; color:var(--ink-dim); margin-top:1px; }
+  .entry .tag{ flex:0 0 auto; font-size:12px; font-weight:500; padding:4px 10px; border-radius:999px; }
+  .entry .tag.grade{ background:var(--accent); color:var(--accent-ink); }
+  .entry .tag.class{ background:var(--accent-2-soft); color:var(--accent-2); }
+  .entry .tag.school{ background:var(--school); color:var(--surface); }
+  .entry .tag.pending{ background:var(--pending); color:var(--surface); }
+  footer{ margin-top:40px; font-size:12.5px; color:var(--ink-dim); line-height:1.7; border-top:1px solid var(--line); padding-top:18px; }
+  @media (max-width:480px){ .wrap{ padding:28px 14px 60px; } .entry{ flex-wrap:wrap; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="head">
+    <p class="eyebrow">שכבה ו׳ · תשפ"ז · 2026–2027</p>
+    <h1>לוח תיאום תאריכי בת מצווה</h1>
+    <p class="purpose">כדי למנוע כפילויות והתנגשויות תאריכים, מרכזים כאן את תאריכי הבת־מצוות של השכבה. לפני שקובעים תאריך כדאי לבדוק שהוא פנוי, ולאחר הקביעה להוסיף אותו ללוח — כך משפחות אחרות יידעו להימנע מהתנגשות. מומלץ לרשום גם אירועים כיתתיים בלבד, כדי למנוע חפיפה עם כיתה מקבילה. תאריכי הספורט של בית הספר כבר מסומנים בלוח.</p>
+    <p class="notice">דף זה מתארח כעמוד ציבורי רגיל (למשל ב-GitHub Pages), ולכן אין לו זיכרון משותף חי: מילוי הטופס פותח הודעת מייל מוכנה לאושרית, שמעדכנת את הלוח עבור כולם. הרשומה שלך תופיע כאן זמנית עם תגית "ממתין לאישור" עד לעדכון הדף.</p>
+    <div class="legend">
+      <span><i class="dot grade"></i> שכבתי — כל השכבה מוזמנת</span>
+      <span><i class="dot class"></i> כיתתי — הכיתה בלבד</span>
+      <span><i class="dot school"></i> אירוע בית ספר — תאריך קבוע</span>
+      <span><i class="dot pending"></i> ממתין לאישור</span>
+    </div>
+  </div>
+
+  <form class="panel" id="add-form" novalidate>
+    <h2>הוספת תאריך ללוח</h2>
+    <p class="sub">מילוי הטופס פותח הודעת מייל מוכנה לאושרית — לאחר שליחתה היא תעדכן את הלוח לכולם.</p>
+    <div class="row">
+      <div class="field narrow">
+        <label for="f-month">חודש</label>
+        <select id="f-month"><option value="">בחירה…</option></select>
+      </div>
+      <div class="field narrow">
+        <label for="f-day">יום בחודש</label>
+        <select id="f-day"><option value="">בחירה…</option></select>
+        <div class="conflict-note" id="conflict-note"></div>
+      </div>
+    </div>
+    <div class="row" style="margin-top:14px">
+      <div class="field">
+        <label for="f-student">שם התלמיד/ה</label>
+        <input type="text" id="f-student" required autocomplete="off">
+      </div>
+      <div class="field">
+        <label for="f-parent">שם ההורה</label>
+        <input type="text" id="f-parent" required autocomplete="off">
+      </div>
+      <div class="field">
+        <label for="f-phone">טלפון ההורה</label>
+        <input type="tel" id="f-phone" required autocomplete="off" placeholder="05X-XXXXXXX" dir="ltr" style="text-align:right">
+      </div>
+    </div>
+    <div class="row" style="margin-top:14px">
+      <div class="field narrow">
+        <label id="scope-label">היקף האירוע</label>
+        <div class="scope-group" role="radiogroup" aria-labelledby="scope-label">
+          <label class="scope-opt"><input type="radio" name="scope" value="class" required><span>כיתתי</span></label>
+          <label class="scope-opt"><input type="radio" name="scope" value="grade"><span>שכבתי</span></label>
+        </div>
+      </div>
+    </div>
+    <div class="form-actions">
+      <button type="submit" class="primary" id="submit-btn">שליחה לאושרית</button>
+      <span class="status" id="status" role="status" aria-live="polite"></span>
+    </div>
+  </form>
+
+  <div class="months" id="months"></div>
+
+  <footer>הדף הזה סטטי: כדי שתאריך יופיע לכולם, יש לשלוח אותו לאושרית (בכפתור למעלה) ולחכות לעדכון הדף. עד אז הוא מסומן "ממתין לאישור" רק אצלך.</footer>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  var OWNER_EMAIL = "oshritsemach@gmail.com";
+
+  var MONTHS = [
+    {key:'2026-09', label:'ספטמבר 2026'}, {key:'2026-10', label:'אוקטובר 2026'},
+    {key:'2026-11', label:'נובמבר 2026'}, {key:'2026-12', label:'דצמבר 2026'},
+    {key:'2027-01', label:'ינואר 2027'}, {key:'2027-02', label:'פברואר 2027'},
+    {key:'2027-03', label:'מרץ 2027'}, {key:'2027-04', label:'אפריל 2027'},
+    {key:'2027-05', label:'מאי 2027'}, {key:'2027-06', label:'יוני 2027'},
+    {key:'2027-07', label:'יולי 2027'}, {key:'2027-08', label:'אוגוסט 2027'}
+  ];
+
+  var SCHOOL_EVENTS = [
+    {date:'2026-11-15', title:'מירוץ שדה', place:'איצטדיון עירוני'},
+    {date:'2027-02-21', title:'כדורעף בנים', place:'היכל הספורט'},
+    {date:'2027-02-25', title:'כדורעף בנות', place:'היכל הספורט'},
+    {date:'2027-03-03', title:'אתלטיקה', place:'הדר יוסף'},
+    {date:'2027-05-02', title:'קט־רגל בנים', place:'איצטדיון עירוני'},
+    {date:'2027-05-06', title:'קט־רגל בנות', place:'איצטדיון עירוני'}
+  ];
+
+  // Confirmed reservations known at publish time.
+  var bookings = [
+    {id:'b1', date:'2027-01-07', student:'ליאן חמאני', parent:'אושרית', phone:'', scope:'grade'}
+  ];
+
+  var DOW = ['יום א׳','יום ב׳','יום ג׳','יום ד׳','יום ה׳','יום ו׳','שבת'];
+
+  function esc(s){
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+    });
+  }
+  function pad2(n){ return n < 10 ? '0' + n : '' + n; }
+  function dayInfo(iso){ var d = new Date(iso + 'T00:00:00'); return { num: d.getDate(), dow: DOW[d.getDay()] }; }
+  function fmtDateLong(iso){
+    var di = dayInfo(iso);
+    var d = new Date(iso + 'T00:00:00');
+    var months = ['בינואר','בפברואר','במרץ','באפריל','במאי','ביוני','ביולי','באוגוסט','בספטמבר','באוקטובר','בנובמבר','בדצמבר'];
+    return di.dow + ', ' + di.num + ' ' + months[d.getMonth()];
+  }
+  function monthKey(iso){ return iso.slice(0,7); }
+  function daysInMonth(key){
+    var y = parseInt(key.slice(0,4), 10), m = parseInt(key.slice(5,7), 10);
+    return new Date(y, m, 0).getDate();
+  }
+  function scopeLabel(scope){ return scope === 'grade' ? 'שכבתי' : 'כיתתי'; }
+  function telHref(phone){ return 'tel:' + String(phone).replace(/[^0-9+]/g, ''); }
+
+  function bookingEntryHTML(b){
+    var di = dayInfo(b.date);
+    var phoneHTML = b.phone ? ' · <a href="' + esc(telHref(b.phone)) + '">' + esc(b.phone) + '</a>' : '';
+    var pendingClass = b.pending ? ' pending' : '';
+    var tag = b.pending ? '<span class="tag pending">ממתין לאישור</span>' : '<span class="tag ' + (b.scope === 'grade' ? 'grade' : 'class') + '">' + scopeLabel(b.scope) + '</span>';
+    return ''
+      + '<div class="entry' + pendingClass + '">'
+      + '  <div class="daybadge"><div class="num">' + di.num + '</div><div class="dow">' + esc(di.dow) + '</div></div>'
+      + '  <div class="names"><div class="student">' + esc(b.student) + '</div><div class="parent">הורה: ' + esc(b.parent) + phoneHTML + '</div></div>'
+      + tag
+      + '</div>';
+  }
+  function schoolEntryHTML(e){
+    var di = dayInfo(e.date);
+    return ''
+      + '<div class="entry school">'
+      + '  <div class="daybadge"><div class="num">' + di.num + '</div><div class="dow">' + esc(di.dow) + '</div></div>'
+      + '  <div class="names"><div class="student">' + esc(e.title) + '</div><div class="parent">' + esc(e.place) + '</div></div>'
+      + '  <span class="tag school">אירוע בית ספר</span>'
+      + '</div>';
+  }
+  function monthHTML(m){
+    var rows = [];
+    bookings.filter(function(b){ return monthKey(b.date) === m.key; }).forEach(function(b){ rows.push({date:b.date, html: bookingEntryHTML(b)}); });
+    SCHOOL_EVENTS.filter(function(e){ return monthKey(e.date) === m.key; }).forEach(function(e){ rows.push({date:e.date, html: schoolEntryHTML(e)}); });
+    rows.sort(function(a,b){ return a.date < b.date ? -1 : (a.date > b.date ? 1 : 0); });
+    var body = rows.length
+      ? '<div class="entries">' + rows.map(function(r){ return r.html; }).join('') + '</div>'
+      : '<p class="empty-line">טרם נקבעו תאריכים בחודש זה.</p>';
+    return '<section class="month" data-month="' + m.key + '"><div class="month-head"><h3>' + esc(m.label) + '</h3></div>' + body + '</section>';
+  }
+  function renderMonths(){
+    document.getElementById('months').innerHTML = MONTHS.map(monthHTML).join('');
+  }
+
+  function populateMonths(){
+    var sel = document.getElementById('f-month');
+    sel.innerHTML = '<option value="">בחירה…</option>' + MONTHS.map(function(m){
+      return '<option value="' + m.key + '">' + esc(m.label) + '</option>';
+    }).join('');
+  }
+  function populateDays(){
+    var monthSel = document.getElementById('f-month');
+    var daySel = document.getElementById('f-day');
+    var key = monthSel.value, keep = daySel.value;
+    daySel.innerHTML = '<option value="">בחירה…</option>';
+    if (!key) return;
+    var n = daysInMonth(key);
+    for (var i = 1; i <= n; i++){
+      var opt = document.createElement('option');
+      opt.value = pad2(i); opt.textContent = i;
+      daySel.appendChild(opt);
+    }
+    if (keep && parseInt(keep,10) <= n){ daySel.value = keep; }
+  }
+  function currentDateValue(){
+    var m = document.getElementById('f-month').value, d = document.getElementById('f-day').value;
+    return (m && d) ? (m + '-' + d) : '';
+  }
+  function checkConflict(){
+    var note = document.getElementById('conflict-note');
+    var dateVal = currentDateValue();
+    if (!dateVal){ note.className = 'conflict-note'; note.textContent = ''; return; }
+    var existingBooking = bookings.filter(function(b){ return b.date === dateVal && !b.pending; });
+    var existingSchool = SCHOOL_EVENTS.filter(function(e){ return e.date === dateVal; });
+    if (existingBooking.length){
+      note.textContent = 'כבר יש תאריך שמור ל' + fmtDateLong(dateVal) + ': ' + existingBooking.map(function(b){ return b.student; }).join(', ') + '. כדאי לוודא שאין התנגשות.';
+      note.className = 'conflict-note show';
+    } else if (existingSchool.length){
+      note.textContent = 'בתאריך זה יש אירוע בית ספר קבוע (' + existingSchool[0].title + ').';
+      note.className = 'conflict-note show info';
+    } else {
+      note.className = 'conflict-note'; note.textContent = '';
+    }
+  }
+
+  document.getElementById('f-month').addEventListener('change', function(){ populateDays(); checkConflict(); });
+  document.getElementById('f-day').addEventListener('change', checkConflict);
+
+  document.getElementById('add-form').addEventListener('submit', function(ev){
+    ev.preventDefault();
+    var date = currentDateValue();
+    var student = document.getElementById('f-student').value.trim();
+    var parent = document.getElementById('f-parent').value.trim();
+    var phone = document.getElementById('f-phone').value.trim();
+    var scopeInput = document.querySelector('input[name="scope"]:checked');
+    var scope = scopeInput ? scopeInput.value : '';
+    var status = document.getElementById('status');
+
+    if (!date || !student || !parent || !phone || !scope){
+      status.textContent = 'צריך לבחור חודש ויום, ולמלא שם תלמיד/ה, שם הורה, טלפון והיקף אירוע.';
+      status.style.color = 'var(--danger)';
+      return;
+    }
+
+    bookings.push({ date: date, student: student, parent: parent, phone: phone, scope: scope, pending: true });
+    renderMonths();
+
+    var subject = 'תאריך בת מצווה ללוח: ' + student + ' — ' + fmtDateLong(date);
+    var body = 'שם התלמיד/ה: ' + student + '\nשם ההורה: ' + parent + '\nטלפון: ' + phone
+      + '\nתאריך: ' + fmtDateLong(date) + ' (' + date + ')'
+      + '\nהיקף האירוע: ' + scopeLabel(scope)
+      + '\n\nנשלח מהלוח הציבורי לתיאום תאריכי בת מצווה.';
+    var mailto = 'mailto:' + OWNER_EMAIL + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+    window.location.href = mailto;
+
+    status.textContent = 'נפתחה הודעת מייל לאושרית — אחרי השליחה היא תעדכן את הלוח לכולם.';
+    status.style.color = 'var(--accent)';
+    document.getElementById('add-form').reset();
+    populateDays();
+  });
+
+  populateMonths();
+  populateDays();
+  renderMonths();
+})();
+</script>
+</body>
+</html>
